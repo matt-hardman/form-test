@@ -16,7 +16,7 @@ import Form from "../components/ReactHookForm/Form";
 import * as yup from "yup";
 
 const validationSchema = {
-
+    email: yup.string().email().required()
 }
 
 const SomeComponent = () => {
@@ -43,15 +43,24 @@ const SomeComponent = () => {
 }
 ```
 
-The `Form` component passes the `register` function (from react-hook-form), as context to it's children where it is registered as a `ref`
-This means form state can be managed using the name prop on each child component
-When the form is submitted an object containing the state is passed to the submitHandler function
+The `Form` component passes the `register` function (from react-hook-form), as context to it's children where it is registered as a `ref`.
+
+This means form state can be managed using the `name` prop on each child component.
+
+When the form is submitted an object containing the state is passed to the submitHandler function.
+
+e.g. 
+```{
+    email: "blabla@bla.com"
+}
+```
+
 
 Each child also receives as errors object via context meaning they can render error infomation based on the validationSchema.
 
 ## Setting up children:
 
-The From components exports 3 child components:
+The `<Form />` components exports 3 child components:
 
 ### Form Header
 Displays a title at the top of the form component
@@ -66,17 +75,17 @@ Displays a title at the top of the form component
 Contains the forms Inputs passed as children
 
 ```tsx
-    <FormContents>
-        {children}
-    <FormContents>
+<FormContents>
+    {children}
+<FormContents>
 ```
 
 ### Form footer
-Contains the submit form button and close button (used if displayed as a modal and displayed if an onClose function is passed)
+Contains the "Submit" form button and "Close" button (The close button is used if displayed as a modal and displayed if an onClose function is passed)
 
 ```tsx
 <FormFooter
-    // defaults to "Submit if omitted"
+    // defaults to "Submit" if omitted
     submitButtonText="Add New User"
     // takes a function to close the modal
     // no button is rendered if omitted
@@ -116,34 +125,38 @@ Adding Children:
 ## Adding inputs
 
 Form Elements contains implimentation of input fields with labels and error handling.
-They also use the `react-hook-form` register function which they receive via context - this allows their state and any errors to be managed by react-hook-form
 
-To use an input simply import the relevant imput and use it as a child of FormContents.
+They also use the `react-hook-form` `register` function which they receive via context - this allows their state and any errors to be managed by `react-hook-form`.
+
+To use an input simply import it and use it as a child of FormContents.
+
 Each input requires a `name` and a `title` prop.
+
 The `title` will be displayed as the inputs label, and the `name` will be used the register the input for state management.
-When the submitHandler is called the inputs state will appear as a value on the state object with the name as it's key.
+
+When the `submitHandler` is called the inputs state will appear as a value on the state object with the name as it's key.
 
 ### FormInput
 ```tsx
-    <FormInput
-        name="email"
-        type="email"
-        title="Email Address"
-        placeholder="email@domain.com"
-    />
+<FormInput
+    name="email"
+    type="email"
+    title="Email Address"
+    placeholder="email@domain.com"
+/>
 ```
 
 ### RadioInputGroup
 ```tsx
-    <RadioInputGroup
-        title="Role"
-        name="role"
-        inputs={[
-            { value: "admin", label: "Admin", defaultChecked: true },
-            { value: "station_owner", label: "Station Owner" },
-            { value: "insights_only", label: "Insights Only" },
-        ]}
-    />
+<RadioInputGroup
+    title="Role"
+    name="role"
+    inputs={[
+        { value: "admin", label: "Admin", defaultChecked: true },
+        { value: "station_owner", label: "Station Owner" },
+        { value: "insights_only", label: "Insights Only" },
+    ]}
+/>
 ```
 
 ### Complete example
