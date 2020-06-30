@@ -1,0 +1,60 @@
+.form {
+  height: 100%;
+  background: white;
+  width: 100%;
+}
+
+.formHeader {
+  align-items: center;
+  display: flex;
+  padding: 20px;
+  padding-top: 30px;
+
+  h1 {
+    font-size: 22px;
+    margin: 0;
+  }
+}
+
+.formContents {
+  background: #e8e8e8;
+  padding: 20px;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    padding: 10px 0;
+  }
+
+  span {
+    padding: 5px 0;
+    font-size: 12px;
+  }
+}
+
+.formItemRadio {
+  border: none;
+  padding: 0;
+  margin: 0;
+
+  .radioButtonGroup {
+    display: flex;
+
+    .radioButton {
+      margin-right: 10px;
+    }
+  }
+}
+
+.formFooter {
+  align-items: center;
+  background: #484848;
+  align-self: flex-end;
+  display: flex;
+  height: 50px;
+  padding: 20px;
+  width: 100%;
+}

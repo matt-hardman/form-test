@@ -1,30 +1,188 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app).
+# Implementing a form     
 
-## Getting Started
+Form components are split between 2 imports:
 
-First, run the development server:
+- `Form`: this handles the implementation of the <form> component, state management and validation.
+- `FormElements`: this contains implementations of individual form elements <input> etc.
 
-```bash
-npm run dev
-# or
-yarn dev
+## Setting up the form:
+
+Form has 2 required props: 
+    - onSubmitFn 
+    - validationSchema
+
+```tsx
+import Form from "../components/ReactHookForm/Form";
+import * as yup from "yup";
+
+const validationSchema = {
+
+}
+
+const SomeComponent = () => {
+    const submitHandler = (data) => {
+        // do something with data
+    }
+
+    return (     
+        <Form 
+            // the onSubmitFn is wrapped in a function from 
+            // react-hook-form internally this handles validations
+            onSubmitFn={submitHandler} 
+
+            // takes a `yup` schema defining the requirements for each field
+            // the schema can be passed in as an object (as above)
+            // internally the schema is wrapped with yup.object().shape()
+            validationSchema={validationSchema}
+        >
+
+            {/* children */}
+
+        </Form>
+    )
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The `Form` component passes the `register` function (from react-hook-form), as context to it's children where it is registered as a `ref`
+This means form state can be managed using the name prop on each child component
+When the form is submitted an object containing the state is passed to the submitHandler function
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Each child also receives as errors object via context meaning they can render error infomation based on the validationSchema.
 
-## Learn More
+## Setting up children:
 
-To learn more about Next.js, take a look at the following resources:
+The From components exports 3 child components:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Form Header
+Displays a title at the top of the form component
 
-You can check out [the Next.js GitHub repository](https://github.com/zeit/next.js) - your feedback and contributions are welcome!
+```tsx
+<FormHeader 
+    title="Form Title"
+/>
+```
 
-## Deploy on Vercel
+### Form Contents
+Contains the forms Inputs passed as children
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+    <FormContents>
+        {children}
+    <FormContents>
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Form footer
+Contains the submit form button and close button (used if displayed as a modal and displayed if an onClose function is passed)
+
+```tsx
+<FormFooter
+    // defaults to "Submit if omitted"
+    submitButtonText="Add New User"
+    // takes a function to close the modal
+    // no button is rendered if omitted
+    onClose={() => {}}
+/>
+```
+
+Adding Children:
+
+```tsx
+    const SomeComponent = () => {
+    const submitHandler = (data) => {
+        // do something with data
+    }
+
+    const handleClose = () => {
+        // close a modal
+    }
+
+    return (     
+        <Form         
+            onSubmitFn={submitHandler} 
+            validationSchema={validationSchema}
+        >
+            <FormHeader title="A form" />
+
+            <FormContents>
+                {/* inputs */}
+            </FormContents>
+
+             <FormFooter onClose={handleClose} />
+        </Form>
+    );
+}
+```
+
+## Adding inputs
+
+Form Elements contains implimentation of input fields with labels and error handling.
+They also use the `react-hook-form` register function which they receive via context - this allows their state and any errors to be managed by react-hook-form
+
+To use an input simply import the relevant imput and use it as a child of FormContents.
+Each input requires a `name` and a `title` prop.
+The `title` will be displayed as the inputs label, and the `name` will be used the register the input for state management.
+When the submitHandler is called the inputs state will appear as a value on the state object with the name as it's key.
+
+### FormInput
+```tsx
+    <FormInput
+        name="email"
+        type="email"
+        title="Email Address"
+        placeholder="email@domain.com"
+    />
+```
+
+### RadioInputGroup
+```tsx
+    <RadioInputGroup
+        title="Role"
+        name="role"
+        inputs={[
+            { value: "admin", label: "Admin", defaultChecked: true },
+            { value: "station_owner", label: "Station Owner" },
+            { value: "insights_only", label: "Insights Only" },
+        ]}
+    />
+```
+
+### Complete example
+
+```tsx
+import Form from "../components/ReactHookForm/Form";
+import * as yup from "yup";
+
+const validationSchema = {
+    email: yup.string().email().required()
+}
+
+const SomeComponent = () => {
+    const submitHandler = (data) => {
+        // will be called with an object with email as a key:
+        // {
+        //     email: "blabla@bla.com"
+        // }
+    }
+
+    return (     
+        <Form           
+            onSubmitFn={submitHandler} 
+            validationSchema={validationSchema}
+        >
+            <FormHeader title="A form" />
+
+            <FormContents>
+                <FormInput
+                    name="email"
+                    type="email"
+                    title="Email Address"
+                    placeholder="email@domain.com"
+                />
+            </FormContents>
+
+             <FormFooter submitButtonText="Add a user" onClose={handleClose} />
+
+        </Form>
+    )
+}
+```

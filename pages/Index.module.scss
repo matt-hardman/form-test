@@ -1,0 +1,10 @@
+.form {
+  margin: 0 15%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.formContents {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  grid-gap: 20px;
+}
