@@ -35,7 +35,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   placeholder,
   errorMessage,
 }) => {
-  const { register, errors } = useFormContext();
+  const { register, errors } = useFormContext("FormInput");
 
   return (
     <div className={cx([styles.formItem, className])}>
@@ -56,7 +56,7 @@ export const RadioInput: React.FC<RadioInputProps> = ({
   label,
   defaultChecked,
 }) => {
-  const { register } = useFormContext();
+  const { register } = useFormContext("RadioInput");
 
   return (
     <div key={value} className={styles.radioButton}>

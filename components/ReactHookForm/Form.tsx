@@ -12,7 +12,14 @@ interface FormContext {
 
 const FormContext = React.createContext<FormContext>({});
 
-export const useFormContext = () => useContext(FormContext);
+export const useFormContext = (name = "Component") => {
+  const context = useContext(FormContext);
+  if (Object.keys(context).length === 0 && context.constructor === Object) {
+    throw new Error(`${name} must be used inside a <Form /> component`);
+  }
+
+  return context;
+};
 
 interface Props<T> extends HTMLAttributes<HTMLElement> {
   onSubmitFn: (data: T) => void;
@@ -49,9 +56,11 @@ export const FormFooter: React.FC<FormFooterProps> = ({
 }) => (
   <footer className={styles.formFooter}>
     <button type="submit">{submitButtonText}</button>
-    <button type="button" onClick={onClose}>
-      Close
-    </button>
+    {onClose && (
+      <button type="button" onClick={onClose}>
+        Close
+      </button>
+    )}
   </footer>
 );
 
